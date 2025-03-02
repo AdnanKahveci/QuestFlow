@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuestFlow - Interactive Question Management</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="QuestFlow - Create, manage and sync questions for educational purposes with offline capabilities">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="QuestFlow Logo" id="logo">
+            <h1>QuestFlow</h1>
+        </div>
+        <div class="connection-status">
+            <span id="status-icon" class="online"><i class="fas fa-wifi"></i></span>
+            <span id="status-text">Online</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="sidebar">
+            <nav>
+                <ul>
+                    <li class="active"><a href="#" data-section="questions"><i class="fas fa-question-circle"></i> Questions</a></li>
+                    <li><a href="#" data-section="create"><i class="fas fa-plus-circle"></i> Create</a></li>
+                    <li><a href="#" data-section="unity"><i class="fas fa-gamepad"></i> Unity View</a></li>
+                    <li><a href="#" data-section="sync"><i class="fas fa-sync"></i> Sync</a></li>
+                    <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="content">
+            <!-- Questions List Section -->
+            <section id="questions" class="active-section">
+                <h2>My Questions</h2>
+                <div class="search-bar">
+                    <input type="text" id="question-search" placeholder="Search questions...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="filter-options">
+                    <select id="type-filter">
+                        <option value="all">All Types</option>
+                        <option value="multiple_choice">Multiple Choice</option>
+                        <option value="true_false">True/False</option>
+                        <option value="fill_blank">Fill in the Blank</option>
+                    </select>
+                </div>
+                <div id="questions-list" class="questions-container">
+                    <!-- Questions will be loaded here dynamically -->
+                    <div class="empty-state">
+                        <i class="fas fa-question-circle fa-4x"></i>
+                        <p>No questions found. Create your first question!</p>
+                        <button class="btn primary" id="create-first-question">Create Question</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Create Question Section -->
+            <section id="create">
+                <h2>Create New Question</h2>
+                <form id="question-form">
+                    <div class="form-group">
+                        <label for="question-type">Question Type</label>
+                        <select id="question-type" required>
+                            <option value="multiple_choice">Multiple Choice</option>
+                            <option value="true_false">True/False</option>
+                            <option value="fill_blank">Fill in the Blank</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question-text">Question Text</label>
+                        <textarea id="question-text" rows="3" required placeholder="Enter your question here..."></textarea>
+                    </div>
+
+                    <div class="form-group" id="options-container">
+                        <label>Options</label>
+                        <div class="option-inputs">
+                            <div class="option-row">
+                                <input type="radio" name="correct-answer" value="0" checked>
+                                <input type="text" class="option-text" placeholder="Option A" required>
+                                <button type="button" class="remove-option"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="option-row">
+                                <input type="radio" name="correct-answer" value="1">
+                                <input type="text" class="option-text" placeholder="Option B" required>
+                                <button type="button" class="remove-option"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-option" class="btn secondary">Add Option</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Media Attachments</label>
+                        <div class="media-upload">
+                            <button type="button" id="add-image" class="btn secondary"><i class="fas fa-image"></i> Add Image</button>
+                            <button type="button" id="add-audio" class="btn secondary"><i class="fas fa-music"></i> Add Audio</button>
+                        </div>
+                        <div id="media-preview" class="media-preview-container">
+                            <!-- Media previews will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancel-question" class="btn secondary">Cancel</button>
+                        <button type="submit" id="save-question" class="btn primary">Save Question</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Unity View Section -->
+            <section id="unity">
+                <h2>Unity Integration</h2>
+                <div class="unity-container">
+                    <div id="unity-placeholder">
+                        <i class="fas fa-gamepad fa-4x"></i>
+                        <p>Unity WebGL build will be displayed here</p>
+                        <button id="load-unity" class="btn primary">Load Unity Demo</button>
+                    </div>
+                    <div id="unity-iframe-container" style="display: none;">
+                        <!-- Unity iframe will be loaded here -->
+                    </div>
+                </div>
+                <div class="unity-controls">
+                    <button id="send-to-unity" class="btn primary" disabled>Send Questions to Unity</button>
+                    <button id="reset-unity" class="btn secondary" disabled>Reset Unity View</button>
+                </div>
+            </section>
+
+            <!-- Sync Section -->
+            <section id="sync">
+                <h2>Synchronization</h2>
+                <div class="sync-status">
+                    <div class="status-card">
+                        <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                        <h3>Last Synced</h3>
+                        <p id="last-sync-time">Never</p>
+                    </div>
+                    <div class="status-card">
+                        <i class="fas fa-database fa-3x"></i>
+                        <h3>Local Questions</h3>
+                        <p id="local-question-count">0</p>
+                    </div>
+                    <div class="status-card">
+                        <i class="fas fa-cloud fa-3x"></i>
+                        <h3>Cloud Questions</h3>
+                        <p id="cloud-question-count">0</p>
+                    </div>
+                </div>
+                <div class="sync-actions">
+                    <button id="sync-now" class="btn primary"><i class="fas fa-sync"></i> Sync Now</button>
+                    <button id="export-questions" class="btn secondary"><i class="fas fa-file-export"></i> Export All</button>
+                    <button id="import-questions" class="btn secondary"><i class="fas fa-file-import"></i> Import</button>
+                </div>
+                <div class="sync-log">
+                    <h3>Sync Log</h3>
+                    <div id="sync-log-entries" class="log-entries">
+                        <!-- Sync log entries will appear here -->
+                        <div class="empty-log">
+                            <p>No sync activities yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings">
+                <h2>Settings</h2>
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Account</h3>
+                        <div class="setting-item">
+                            <label for="api-url">API URL</label>
+                            <input type="text" id="api-url" placeholder="https://api.questflow.com">
+                        </div>
+                        <div class="setting-item">
+                            <label for="api-key">API Key</label>
+                            <input type="password" id="api-key">
+                            <button type="button" id="show-api-key" class="btn icon"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <h3>Storage</h3>
+                        <div class="setting-item">
+                            <label for="storage-location">Storage Location</label>
+                            <input type="text" id="storage-location" readonly>
+                            <button type="button" id="change-storage" class="btn secondary">Change</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Storage Usage</label>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%"></div>
+                            </div>
+                            <span id="storage-usage">0 MB used</span>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <h3>Application</h3>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="auto-sync" checked>
+                            <label for="auto-sync">Auto-sync when online</label>
+                        </div>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="dark-mode">
+                            <label for="dark-mode">Dark Mode</label>
+                        </div>
+                        <div class="setting-item">
+                            <button id="clear-data" class="btn danger">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 QuestFlow. All rights reserved.</p>
+        <p>Version 1.0.0</p>
+    </footer>
+
+    <!-- Notification System -->
+    <div id="notification-container"></div>
+
+    <!-- Modal System -->
+    <div id="modal-overlay" class="hidden">
+        <div id="modal-container">
+            <div id="modal-header">
+                <h3 id="modal-title">Modal Title</h3>
+                <button id="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-content">
+                <!-- Modal content will be dynamically inserted here -->
+            </div>
+            <div id="modal-footer">
+                <button id="modal-cancel" class="btn secondary">Cancel</button>
+                <button id="modal-confirm" class="btn primary">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="js/unity-integration.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
